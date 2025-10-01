@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nfs-test-pod
+  namespace: game
+spec:
+  nodeSelector:
+    hardware: xeon
+  containers:
+  - name: test
+    image: busybox
+    command: ["sleep", "3600"]
+    volumeMounts:
+    - name: nfs-volume
+      mountPath: /mnt/game
+      readOnly: true
+  volumes:
+  - name: nfs-volume
+    persistentVolumeClaim:
+      claimName: ue5-game-files-pvc

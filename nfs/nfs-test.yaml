@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: game
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ue5-game-files-nfs
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadOnlyMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: 10.240.0.40
+    path: /opt/ue5-games
+    readOnly: true
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ue5-game-files-pvc
+  namespace: game
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 100Gi
+  volumeName: ue5-game-files-nfs
