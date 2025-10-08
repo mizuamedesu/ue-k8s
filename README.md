@@ -10,6 +10,6 @@
 
 ### ソフトウェア
 - **k3s**: v1.33.4+k3s1 (軽量Kubernetes)
-- **Kata Containers**: 3.21.0 (VM並みの隔離)
+- **Kata Containers**: 3.21.0
 - **NFS**: ゲームバイナリの共有ストレージ
 - **Container Runtime**: containerd + Kata runtime
