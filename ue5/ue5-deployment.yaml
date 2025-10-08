@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ue5-gameserver
+  namespace: game
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ue5-server
+  template:
+    metadata:
+      labels:
+        app: ue5-server
+    spec:
+      runtimeClassName: kata  # Kata Containersで実行（強力な隔離）
+      nodeSelector:
+        hardware: xeon  # Xeonでのみ実行
+
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+
+      containers:
+      - name: gameserver
+        image: ue-server-env:latest
+        imagePullPolicy: IfNotPresent
+
+        env:
+        - name: PROJECT_DIR
+          value: "container"
+        - name: SERVER_SCRIPT
+          value: "containerServer.sh"
+        - name: SERVER_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: MAX_PLAYERS
+          value: "16"
+        - name: SERVER_PORT
+          value: "7777"
+        - name: QUERY_PORT
+          value: "27015"
+
+        ports:
+        - name: game
+          containerPort: 7777
+          protocol: UDP
+        - name: query
+          containerPort: 27015
+          protocol: UDP
+
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+          readOnlyRootFilesystem: false  # Savedディレクトリに書き込むため
+
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+
+        volumeMounts:
+        - name: game-files
+          mountPath: /game
+          readOnly: true
+        - name: saved-data
+          mountPath: /game/container/Saved
+
+      volumes:
+      - name: game-files
+        persistentVolumeClaim:
+          claimName: ue5-game-files-pvc
+      - name: saved-data
+        emptyDir: {}  # とりあえず一時保存
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ue5-gameserver
+  namespace: game
+spec:
+  type: LoadBalancer
+  selector:
+    app: ue5-server
+  ports:
+  - name: game
+    port: 7777
+    targetPort: 7777
+    protocol: UDP
+  - name: query
+    port: 27015
+    targetPort: 27015
+    protocol: UDP
