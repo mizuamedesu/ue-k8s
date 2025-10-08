@@ -3,6 +3,3 @@ kind: RuntimeClass
 metadata:
   name: kata
 handler: kata
-scheduling:
-  nodeSelector:
-    hardware: xeon  # Kata ContainersはXeonでのみ使用
