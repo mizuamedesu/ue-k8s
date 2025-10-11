@@ -13,9 +13,9 @@ spec:
       labels:
         app: ue5-server
     spec:
-      runtimeClassName: kata  # Kata Containersで実行（強力な隔離）
+      # runtimeClassName: kata  # まず通常runtimeでテスト
       nodeSelector:
-        hardware: xeon  # Xeonでのみ実行
+        hardware: xeon
 
       securityContext:
         runAsNonRoot: true
@@ -57,7 +57,7 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]
-          readOnlyRootFilesystem: false  # Savedディレクトリに書き込むため
+          readOnlyRootFilesystem: false
 
         resources:
           requests:
@@ -70,16 +70,17 @@ spec:
         volumeMounts:
         - name: game-files
           mountPath: /game
+          subPath: container  # ← 追加
           readOnly: true
         - name: saved-data
-          mountPath: /game/container/Saved
+          mountPath: /game/Saved  # ← 修正
 
       volumes:
       - name: game-files
         persistentVolumeClaim:
           claimName: ue5-game-files-pvc
       - name: saved-data
-        emptyDir: {}  # とりあえず一時保存
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
