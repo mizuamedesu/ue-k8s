@@ -27,7 +27,7 @@ spec:
       containers:
       - name: gameserver
         image: ue-server-env:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Never
 
         env:
         - name: PROJECT_DIR
