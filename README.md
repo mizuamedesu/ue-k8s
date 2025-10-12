@@ -29,3 +29,10 @@ mizuame@uc-k8s4p:/opt/ue5-games$
 ```
 
 一旦共有NFS直下にぶち込む状態
+
+```
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+git clone https://github.com/wunderio/csi-rclone.git
+cd csi-rclone
+kubectl apply -f deploy/kubernetes/1.20
+```
