@@ -4,7 +4,7 @@ metadata:
   name: ue5-gameserver
   namespace: game
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: ue5-server
@@ -15,7 +15,7 @@ spec:
     spec:
       runtimeClassName: kata
       nodeSelector:
-        hardware: xeon
+        hardware: game-runner
 
       securityContext:
         runAsNonRoot: true
