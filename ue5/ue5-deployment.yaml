@@ -75,7 +75,7 @@ spec:
       volumes:
       - name: game-files
         persistentVolumeClaim:
-          claimName: ue5-game-files-pvc
+          claimName: ue5-game-files-r2-pvc
 ---
 apiVersion: v1
 kind: Service
