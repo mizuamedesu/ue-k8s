@@ -4,7 +4,7 @@ metadata:
   name: ue5-gameserver
   namespace: game
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: ue5-server
@@ -13,7 +13,7 @@ spec:
       labels:
         app: ue5-server
     spec:
-      # runtimeClassName: kata  # まず通常runtimeでテスト
+      runtimeClassName: kata 
       nodeSelector:
         hardware: xeon
 
@@ -62,10 +62,10 @@ spec:
         resources:
           requests:
             memory: "2Gi"
-            cpu: "1000m"
-          limits:
-            memory: "4Gi"
             cpu: "2000m"
+          limits:
+            memory: "8Gi"
+            cpu: "4000m"
 
         volumeMounts:
         - name: game-files
