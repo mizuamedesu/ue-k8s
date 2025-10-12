@@ -26,8 +26,8 @@ spec:
 
       containers:
       - name: gameserver
-        image: ue-server-env:latest
-        imagePullPolicy: Never
+        image: ghcr.io/mizuamedesu/ue-server-env:latest
+        imagePullPolicy: Always
 
         env:
         - name: PROJECT_DIR

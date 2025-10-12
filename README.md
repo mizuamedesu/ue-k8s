@@ -31,6 +31,10 @@ mizuame@uc-k8s4p:/opt/ue5-games$
 一旦共有NFS直下にぶち込む状態
 
 ```
+sudo mkdir -p /var/lib/rancher/k3s/agent/etc/containerd/
+sudo nano /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
+sudo systemctl restart k3s-agent
+```
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 git clone https://github.com/wunderio/csi-rclone.git
 cd csi-rclone

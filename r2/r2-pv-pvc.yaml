@@ -15,6 +15,9 @@ spec:
       remote: "r2"
       remotePath: "k8s/LinuxServer"
       secretName: rclone-secret
+      vfs-cache-mode: full
+      dir-perms: "0777"
+      file-perms: "0755"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
