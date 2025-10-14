@@ -4,7 +4,7 @@ metadata:
   name: ue5-gameserver
   namespace: game
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: ue5-server
@@ -16,6 +16,19 @@ spec:
       runtimeClassName: kata
       nodeSelector:
         hardware: game-runner
+
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - ue5-server
+              topologyKey: kubernetes.io/hostname
 
       securityContext:
         runAsNonRoot: true
@@ -31,7 +44,7 @@ spec:
 
         env:
         - name: PROJECT_DIR
-          value: ""  # ← subPath使うので空に戻す
+          value: ""
         - name: SERVER_SCRIPT
           value: "containerServer.sh"
         - name: SERVER_NAME
@@ -70,7 +83,7 @@ spec:
         volumeMounts:
         - name: game-files
           mountPath: /game
-          subPath: LinuxServer  # ← これを追加
+          subPath: LinuxServer
           readOnly: true
 
       volumes:
