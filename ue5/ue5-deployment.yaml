@@ -31,7 +31,7 @@ spec:
 
         env:
         - name: PROJECT_DIR
-          value: ""
+          value: ""  # ← subPath使うので空に戻す
         - name: SERVER_SCRIPT
           value: "containerServer.sh"
         - name: SERVER_NAME
@@ -70,12 +70,13 @@ spec:
         volumeMounts:
         - name: game-files
           mountPath: /game
+          subPath: LinuxServer  # ← これを追加
           readOnly: true
 
       volumes:
       - name: game-files
         persistentVolumeClaim:
-          claimName: ue5-game-files-r2-pvc
+          claimName: ue5-game-files-s3-pvc
 ---
 apiVersion: v1
 kind: Service
