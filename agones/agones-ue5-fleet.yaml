@@ -1,0 +1,98 @@
+apiVersion: "agones.dev/v1"
+kind: Fleet
+metadata:
+  name: ue5-gameserver-fleet
+  namespace: game
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: ue5-server
+    spec:
+      ports:
+      - name: game
+        containerPort: 7777
+        protocol: UDP
+        portPolicy: Dynamic
+      - name: query
+        containerPort: 27015
+        protocol: UDP
+        portPolicy: Dynamic
+      
+      health:
+        disabled: false
+        initialDelaySeconds: 30
+        periodSeconds: 10
+      
+      template:
+        spec:
+          runtimeClassName: kata
+          nodeSelector:
+            hardware: game-runner
+
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+              - weight: 100
+                podAffinityTerm:
+                  labelSelector:
+                    matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                      - ue5-server
+                  topologyKey: kubernetes.io/hostname
+
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+
+          containers:
+          - name: gameserver
+            image: ghcr.io/mizuamedesu/ue-server-env:latest
+            imagePullPolicy: Always
+
+            env:
+            - name: PROJECT_DIR
+              value: ""
+            - name: SERVER_SCRIPT
+              value: "containerServer.sh"
+            - name: SERVER_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MAX_PLAYERS
+              value: "16"
+            - name: SERVER_PORT
+              value: "7777"
+            - name: QUERY_PORT
+              value: "27015"
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+              readOnlyRootFilesystem: false
+
+            resources:
+              requests:
+                memory: "1Gi"
+                cpu: "1000m"
+              limits:
+                memory: "2Gi"
+                cpu: "2000m"
+
+            volumeMounts:
+            - name: game-files
+              mountPath: /game
+              subPath: LinuxServer
+              readOnly: true
+
+          volumes:
+          - name: game-files
+            persistentVolumeClaim:
+              claimName: ue5-game-files-s3-pvc
