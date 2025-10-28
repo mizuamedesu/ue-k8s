@@ -23,7 +23,7 @@ spec:
       health:
         disabled: false
         initialDelaySeconds: 30
-        periodSeconds: 10
+        periodSeconds: 15
       
       template:
         spec:
