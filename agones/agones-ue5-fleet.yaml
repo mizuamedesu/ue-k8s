@@ -90,8 +90,7 @@ spec:
             - name: game-files
               mountPath: /game
               subPath: LinuxServer
-              readOnly: true
-
+              readOnly: false #非常によろしくないので、一旦falseにしているが、後で直すこと
           volumes:
           - name: game-files
             persistentVolumeClaim:
