@@ -26,23 +26,33 @@ spec:
         periodSeconds: 15
       
       template:
+        metadata:
+          labels:
+            app: ue5-server
+        
         spec:
           runtimeClassName: kata
           nodeSelector:
             hardware: game-runner
 
+          topologySpreadConstraints:
+          - maxSkew: 1
+            topologyKey: kubernetes.io/hostname
+            whenUnsatisfiable: DoNotSchedule
+            labelSelector:
+              matchLabels:
+                app: ue5-server
+
           affinity:
             podAntiAffinity:
-              preferredDuringSchedulingIgnoredDuringExecution:
-              - weight: 100
-                podAffinityTerm:
-                  labelSelector:
-                    matchExpressions:
-                    - key: app
-                      operator: In
-                      values:
-                      - ue5-server
-                  topologyKey: kubernetes.io/hostname
+              requiredDuringSchedulingIgnoredDuringExecution:
+              - labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - ue5-server
+                topologyKey: kubernetes.io/hostname
 
           securityContext:
             runAsNonRoot: true
