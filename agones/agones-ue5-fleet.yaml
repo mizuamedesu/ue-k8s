@@ -43,16 +43,6 @@ spec:
               matchLabels:
                 app: ue5-server
 
-          affinity:
-            podAntiAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-              - labelSelector:
-                  matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                    - ue5-server
-                topologyKey: kubernetes.io/hostname
 
           securityContext:
             runAsNonRoot: true
