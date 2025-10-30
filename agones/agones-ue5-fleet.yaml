@@ -25,6 +25,8 @@ spec:
         initialDelaySeconds: 30
         periodSeconds: 15
       
+      eviction:
+        safe: Always
       template:
         metadata:
           labels:
@@ -38,11 +40,10 @@ spec:
           topologySpreadConstraints:
           - maxSkew: 1
             topologyKey: kubernetes.io/hostname
-            whenUnsatisfiable: DoNotSchedule
+            whenUnsatisfiable: ScheduleAnyway
             labelSelector:
               matchLabels:
                 app: ue5-server
-
 
           securityContext:
             runAsNonRoot: true
