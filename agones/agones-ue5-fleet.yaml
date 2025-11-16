@@ -4,7 +4,7 @@ metadata:
   name: ue5-gameserver-fleet
   namespace: game
 spec:
-  replicas: 2
+  replicas: 5
   template:
     metadata:
       labels:
@@ -81,11 +81,11 @@ spec:
 
             resources:
               requests:
-                memory: "1Gi"
-                cpu: "1000m"
-              limits:
-                memory: "2Gi"
+                memory: "16Gi"
                 cpu: "2000m"
+              limits:
+                memory: "16Gi"
+                cpu: "20000m"
 
             volumeMounts:
             - name: game-files
