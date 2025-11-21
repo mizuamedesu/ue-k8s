@@ -43,8 +43,8 @@ echo \
 
 sudo apt-get update
 
-if ! dpkg -l | grep -q "^ii.*containerd.io.*1.7.28"; then
-    sudo apt-get install -y containerd.io=1.7.28-1~ubuntu.22.04~jammy
+if ! dpkg -l | grep -q "^ii.*containerd.io"; then
+    sudo apt-get install -y containerd.io
 fi
 
 sudo mkdir -p /etc/containerd
@@ -73,10 +73,22 @@ fi
 sudo apt-mark hold kubelet kubeadm kubectl
 
 if [ ! -f /opt/kata/bin/kata-runtime ]; then
+    echo "Installing Kata Containers..."
     bash -c "$(curl -fsSL https://raw.githubusercontent.com/kata-containers/kata-containers/main/utils/kata-manager.sh) -o"
-    if [ -d ~/opt/kata ] && [ ! -d /opt/kata ]; then
+    if [ -d ~/opt/kata ]; then
+        if [ -d /opt/kata ]; then
+            echo "Removing existing /opt/kata..."
+            sudo rm -rf /opt/kata
+        fi
+        echo "Moving kata to /opt/..."
         sudo mv ~/opt/kata /opt/
     fi
+
+    if [ ! -f /opt/kata/bin/kata-runtime ]; then
+        echo "ERROR: Kata runtime not found after installation"
+        exit 1
+    fi
+    echo "Kata Containers installed successfully"
 fi
 
 if [ ! -f /etc/profile.d/kata.sh ]; then
